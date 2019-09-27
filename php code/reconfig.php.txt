@@ -1,0 +1,22 @@
+<?php
+session_start(); /* Starts the session */
+if(!isset($_SESSION['UserData']['Username'])){
+header("location:index.php");
+exit;
+}
+?>
+
+<?php
+
+$message=shell_exec("sh /var/www/html/reconfig.sh "."'".$_POST["ssid"]."'"." "."'".$_POST["psk"]."'"." "."'".$_POST["country"]."'"." "."'".$_POST["channel"]."'");
+
+header("location:index.php");
+?>
+
+
+
+
+
+
+
+

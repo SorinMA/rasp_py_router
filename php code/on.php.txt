@@ -1,0 +1,29 @@
+<?php session_start(); /* Starts the session */
+/* Check Login form submitted */
+if(isset($_POST['Submit'])){
+/* Define username and associated password array */
+        $logins = array('Alex' => '123456','username1' => 'password1','username2' => 'password2');
+        $fuser = fopen("user.txt", "r") or die("Unable to open file!");
+        $user =  fread($fuser,filesize("user.txt"));
+        fclose($fuser);
+
+        $fpasswd = fopen("passwd.txt", "r") or die("Unable to open file!");
+        $passwd = fread($fpasswd,filesize("passwd.txt"));
+        fclose($fpasswd);
+/* Check and assign submitted Username and Password to new variable */
+        $Username = isset($_POST['Username']) ? $_POST['Username']."\n" : '';
+        $Password = isset($_POST['Password']) ? $_POST['Password']."\n" : '';
+
+        if ($user == $Username && $passwd == $Password){
+
+                $_SESSION['UserData']['Username']=$user;
+                header("location:in.php");
+                exit;
+        } else {
+                header("location:index.php");
+                $msg="<span style='color:red'>Invalid Login Details</span>";
+        }
+}
+?>
+
+

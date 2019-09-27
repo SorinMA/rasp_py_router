@@ -1,0 +1,160 @@
+Final Code:
+
+
+import pygame
+import sys
+import time
+from time import strftime
+import os
+
+import sh
+import netifaces as ni
+import nmap
+
+time_stamp_prev=0
+
+#Set the framebuffer device to be the TFT
+os.environ["SDL_FBDEV"] = "/dev/fb1"
+
+def displayTime():
+#    """Used to display date and time on the TFT"""
+    screen.fill((0,0,0))
+    font = pygame.font.Font(None, 50)
+    now=time.localtime()
+
+    for setting in [("%H:%M:%S",60),("%d  %b",10)] :
+         timeformat,dim=setting
+         currentTimeLine = strftime(timeformat, now)
+         text = font.render(currentTimeLine, 0, (0,250,150))
+         Surf = pygame.transform.rotate(text, -90)
+         screen.blit(Surf,(dim,20))
+
+
+def estract3RdPoint( ip ):
+    contor = 0
+    aux = '';
+    for i in ip:
+      aux = aux + i
+      if i == '.':
+        contor = contor + 1
+        if contor == 3:
+          break;
+    return aux
+
+
+def getIP() :
+
+  ip = (((ni.ifaddresses('eth0'))[2])[0])['addr']
+  rIp = estract3RdPoint(ip) + '0/24'
+  nm = nmap.PortScanner()
+  nm.scan(hosts=rIp, arguments='-n -sP -PE -PA21,23,80,3389')
+  hosts_list = [(x, nm[x]['status']['state']) for x in nm.all_hosts()]
+  return hosts_list
+
+def displayText(text, size, line, color, clearScreen):
+
+    """Used to display text to the screen. displayText is only configured to display
+    two lines on the TFT. Only clear screen when writing the first line"""
+    if clearScreen:
+        screen.fill((0, 0, 0))
+
+    font = pygame.font.Font(None, size)
+    text = font.render(text, 0, color)
+    textRotated = pygame.transform.rotate(text, -90)
+    textpos = textRotated.get_rect()
+    textpos.centery = 80
+    if line == 1:
+         textpos.centerx = 115
+         screen.blit(textRotated,textpos)
+    elif line == 2:
+        textpos.centerx = 95
+        screen.blit(textRotated,textpos)
+    elif line == 3:
+        textpos.centerx = 75
+        screen.blit(textRotated, textpos)
+    elif line == 4:
+        textpos.centerx = 55
+        screen.blit(textRotated, textpos)
+    elif line == 5:
+        textpos.centerx = 35
+        screen.blit(textRotated, textpos)
+
+
+def main():
+    global screen
+    pygame.init()
+
+    size = width, height = 128, 160
+    black = 0, 0, 0
+
+    pygame.mouse.set_visible(0)
+    screen = pygame.display.set_mode(size)
+    firstTime = 0
+#HP boiler=11
+#Solar boiler=16
+#Living room t=76
+#Kids room t=18
+#Outside temp=71
+#Outside humidity=70
+    displayText('The router is almost on', 20, 1, (200,200,1), True)
+    pygame.display.flip()
+
+    print "Router just start now"
+    contor = 1
+    allIP = getIP()
+    print "IP done"
+    import pyspeedtest
+    st = pyspeedtest.SpeedTest()
+    ping = round(st.ping(),1)
+    down = round(st.download()/1000000,2)
+    up = round(st.upload()/1000000,2)
+    print "all config done"
+    localIp = (((ni.ifaddresses('eth0'))[2])[0])['addr']
+    while True:
+        print ping, down, up
+        #allIP = getIP()
+
+        if contor == 2:
+            ping = round(st.ping(),1)
+        if contor == 3:
+            down = round(st.download()/1000000,2)
+        if contor== 4:
+            up = round(st.upload()/1000000,2)
+
+        if contor == 5:
+            allIP = getIP()
+            print 'update ips'
+            contor = 1
+        contor = contor + 1
+
+        #--- connect ip
+        for i,j in allIP:
+            displayText('IP:'+i + j, 20, 1, (200,200,1), True)
+            displayText('Ping:    '+str(ping), 25, 2, (200,200,1), False)
+            displayText('Download:'+str(down), 25, 3, (200,200,1), False)
+            displayText('Upload:  '+str(up), 25, 4, (200,200,1), False)
+            displayText('Other devices', 20, 5, (200,200,1), False)
+            pygame.display.flip()
+            time.sleep(1)
+
+        #---
+        displayText('IP:'+localIp, 20, 1, (200,200,1), True)
+        displayText('Ping:    '+str(ping), 25, 2, (200,200,1), False)
+        displayText('Download:'+str(down), 25, 3, (200,200,1), False)
+        displayText('Upload:  '+str(up), 25, 4, (200,200,1), False)
+        displayText('Our Router', 20, 5, (200, 200, 1), False)
+        pygame.display.flip()
+	if firstTime == 0:
+            time.sleep(1)
+            firstTime = 1
+
+if __name__ == '__main__':
+    main()
+
+	
+
+
+
+
+
+

@@ -1,0 +1,430 @@
+
+first of all u need to change the time zone to your localc time zone
+using raspi-config, enable spi, enale ssh
+
+sudo nano  /etc/modules
+	spi-bcm2835
+	fbtft_device
+sudo nano /etc/modprobe.d/fbtft.conf
+	options fbtft_device name=sainsmart18 gpios=reset:25,dc:24,led:18 speed=40000000 bgr=1 rotate=180 custom=1 fps=60
+sudo apt-get update
+sudo apt-get install python-pygame
+
+sudo reboot
+
+nano test.py
+
+------------------------
+ 
+import pygame
+import sys
+import time
+from time import strftime
+import os
+import httplib
+import urllib
+import json
+ 
+time_stamp_prev=0
+ 
+#Set the framebuffer device to be the TFT
+os.environ["SDL_FBDEV"] = "/dev/fb1"
+ 
+def displayTime():
+#    """Used to display date and time on the TFT"""
+    screen.fill((0,0,0))
+    font = pygame.font.Font(None, 50)
+    now=time.localtime()
+ 
+    for setting in [("%H:%M:%S",60),("%d  %b",10)] :
+         timeformat,dim=setting
+         currentTimeLine = strftime(timeformat, now)
+         text = font.render(currentTimeLine, 0, (0,250,150))
+         Surf = pygame.transform.rotate(text, -90)
+         screen.blit(Surf,(dim,20))
+ 
+def displayText(text, size, line, color, clearScreen):
+ 
+    """Used to display text to the screen. displayText is only configured to display 
+    two lines on the TFT. Only clear screen when writing the first line"""
+    if clearScreen:
+        screen.fill((0, 0, 0))
+ 
+    font = pygame.font.Font(None, size)
+    text = font.render(text, 0, color)
+    textRotated = pygame.transform.rotate(text, -90)
+    textpos = textRotated.get_rect()
+    textpos.centery = 80  
+    if line == 1:
+         textpos.centerx = 90
+         screen.blit(textRotated,textpos)
+    elif line == 2:
+        textpos.centerx = 40
+        screen.blit(textRotated,textpos)
+ 
+def main():
+    global screen
+    pygame.init()
+ 
+    size = width, height = 128, 160
+    black = 0, 0, 0
+ 
+    pygame.mouse.set_visible(0)
+    screen = pygame.display.set_mode(size)
+ 
+#HP boiler=11
+#Solar boiler=16
+#Living room t=76
+#Kids room t=18
+#Outside temp=71
+#Outside humidity=70
+ 
+    while True:
+ 
+     
+        displayTime()
+        pygame.display.flip()
+        time.sleep(10)
+ 
+ 
+if __name__ == '__main__':
+    main()
+-------------------------------------
+sudo python test.py&
+
+--------------------------------------
+
+sudo apt-get install python-netifaces
+ python>> import netifaces as ni
+          ip = (((ni.ifaddresses('eth0'))[2])[0])['addr'] #eth0 addr
+
+--------------------------
+
+python >> 
+	
+import sh
+
+import netifaces as ni
+
+ip = (((ni.ifaddresses('eth0'))[2])[0])['addr']
+
+def estract3RdPoint( ip ):
+    contor = 0
+    aux = '';
+    for i in ip:
+      aux = aux + i
+      if i == '.':
+        contor = contor + 1
+        if contor == 3:
+          break;
+    return aux
+
+print ip
+rIp = estract3RdPoint(ip)
+print rIp
+
+rIp = rIp + '0/24'
+
+import nmap
+nm = nmap.PortScanner()
+nm.scan(hosts=rIp, arguments='-n -sP -PE -PA21,23,80,3389')
+hosts_list = [(x, nm[x]['status']['state']) for x in nm.all_hosts()]
+outIp = []
+print hosts_list
+
+
+-------------------------------------- this get ip form neth
+
+
+import pygame
+import sys
+import time
+from time import strftime
+import os
+
+import sh
+import netifaces as ni
+import nmap
+ 
+time_stamp_prev=0
+ 
+#Set the framebuffer device to be the TFT
+os.environ["SDL_FBDEV"] = "/dev/fb1"
+ 
+def displayTime():
+#    """Used to display date and time on the TFT"""
+    screen.fill((0,0,0))
+    font = pygame.font.Font(None, 50)
+    now=time.localtime()
+ 
+    for setting in [("%H:%M:%S",60),("%d  %b",10)] :
+         timeformat,dim=setting
+         currentTimeLine = strftime(timeformat, now)
+         text = font.render(currentTimeLine, 0, (0,250,150))
+         Surf = pygame.transform.rotate(text, -90)
+         screen.blit(Surf,(dim,20))
+
+
+def estract3RdPoint( ip ):
+    contor = 0
+    aux = '';
+    for i in ip:
+      aux = aux + i
+      if i == '.':
+        contor = contor + 1
+        if contor == 3:
+          break;
+    return aux
+
+def getIP() :
+  
+  ip = (((ni.ifaddresses('eth0'))[2])[0])['addr']
+  rIp = estract3RdPoint(ip) + '0/24'
+  nm = nmap.PortScanner()
+  nm.scan(hosts=rIp, arguments='-n -sP -PE -PA21,23,80,3389')
+  hosts_list = [(x, nm[x]['status']['state']) for x in nm.all_hosts()]
+  return hosts_list
+
+
+def displayText(text, size, line, color, clearScreen):
+ 
+    """Used to display text to the screen. displayText is only configured to display 
+    two lines on the TFT. Only clear screen when writing the first line"""
+    if clearScreen:
+        screen.fill((0, 0, 0))
+ 
+    font = pygame.font.Font(None, size)
+    text = font.render(text, 0, color)
+    textRotated = pygame.transform.rotate(text, -90)
+    textpos = textRotated.get_rect()
+    textpos.centery = 80  
+    if line == 1:
+         textpos.centerx = 90
+         screen.blit(textRotated,textpos)
+    elif line == 2:
+        textpos.centerx = 40
+        screen.blit(textRotated,textpos)
+ 
+def main():
+    global screen
+    pygame.init()
+ 
+    size = width, height = 128, 160
+    black = 0, 0, 0
+ 
+    pygame.mouse.set_visible(0)
+    screen = pygame.display.set_mode(size)
+ 
+#HP boiler=11
+#Solar boiler=16
+#Living room t=76
+#Kids room t=18
+#Outside temp=71
+#Outside humidity=70
+    contor = 0
+    allIP = getIP()
+    while True:
+
+        #allIP = getIP()
+        contor = contor + 1
+        if contor == 20:
+            allIP = getIP()
+
+        localIp = (((ni.ifaddresses('eth0'))[2])[0])['addr']
+        displayText(localIp + ':serverAdd', 15, 1, (200,200,1), True)
+        pygame.display.flip()
+        time.sleep(2)
+        #--- connect ip
+        for i,j in allIP:
+            displayText(i + j + ' inOurWAN', 15, 1, (200,200,1), True)
+            pygame.display.flip()
+            time.sleep(1)
+
+        #---
+        displayTime()
+        pygame.display.flip()
+        time.sleep(1)
+        
+ 
+ 
+if __name__ == '__main__':
+    main()
+--------------------------------
+sudo apt-get install python-pip
+sudo pip install pyspeedtest
+
+sudo nano  /usr/local/lib/python2.7/dist-packages/pyspeedtest.py
+Go to line 186 and change the following line: connection = self.connect('www.speedtest.net') 
+to 
+connection = self.connect('c.speedtest.net')
+
+-------------- ultimele modificari pt ecran in cod final ----- origin: https://harizanov.com/2013/02/using-my-1-8-tft-as-a-raspberry-pi-status-display/
+
+run from startup video script:
+into /etc/rc.local (just make sure its before the exit):
+	sudo python /home/pi/newShow.py
+
+
+
+-----PHP
+
+deci pasul 1 e setarea ip static: https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md
+sudo nano /etc/dhcpcd.conf
+--
+		interface wlan0
+    		static ip_address=192.168.4.1/24
+    		nohook wpa_supplicant
+--
+Now restart the dhcpcd daemon and set up the new wlan0 configuration:
+sudo service dhcpcd restart
+
+Now let s foking set up this foking hot spot: https://github.com/Phoenix1747/RouteryPi
+
+sudo apt install hostapd bridge-utils
+
+sudo nano /etc/hostapd/hostapd.conf
+---
+# Bridge mode
+bridge=br0
+
+# Networking interface
+interface=wlan0
+
+# WiFi configuration
+ssid=neluSorinelu
+channel=1
+hw_mode=g
+country_code=RO
+ieee80211n=1
+ieee80211d=1
+wmm_enabled=1
+
+# WiFi security
+auth_algs=1
+wpa=2
+wpa_key_mgmt=WPA-PSK
+rsn_pairwise=CCMP
+wpa_passphrase=cruciada
+
+------
+sudo nano /etc/network/interfaces
+--
+Delete anything that's in here and paste the following configuration:
+auto lo
+iface lo inet loopback
+
+# Ethernet
+auto eth0
+allow-hotplug eth0
+iface eth0 inet manual
+
+# WiFi
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet manual
+wireless-power off
+
+# Bridge
+auto br0
+iface br0 inet dhcp
+bridge_ports eth0 wlan0
+bridge_fd 0
+bridge_stp off
+----
+
+dupa ce am setat ip staic pt video avem: 
+ip = (((ni.gateways())['default'])[2])[0]
+
+----------------------------------- let s start the php server 
+
+inainte de a ne apuca de php, avem de facut niste modificari, din nou; in urma modificarilor de staic ip, avem de aface cu o problema, 
+trebuie sa reluam adresa naostra(adresa de braodast):
+astfel:
+1
+// ultima varianta prelua adresa suresei de internet; nu avem nevoie de asa ceva
+
+sudo shutdown -r now (or sudo reboot)   - comanda utila
+
+facem mare script de rebot : reboot.sh
+ >> echo 1 > /proc/sys/kernel/sysrq 
+    echo b > /proc/sysrq-trigger
+
+------ PHP now
+
+sudo apt-get install apache2 -y
+
+sudo apt-get install php libapache2-mod-php -y
+
+cd /var/www/html
+
+sudo rm index.html
+
+sudo nano index.php
+
+//---important pt a rula scripturi via php
+
+sudo nano /etc/sudoers
+   www-data ALL=NOPASSWD: ALL
+
+
+----------------------- some scripts----- first the form used to call the modifier
+
+html>
+<body>
+<?php echo "Nelu te pupa"; ?>
+<?php echo date('Y-m-d H:i:s');
+//$output = shell_exec('sh /var/www/html/reconfig.sh');
+?>
+<br>
+<form action="reconfig.php" method="post">
+NewWIFIhost: <input type="text" name="ssid"><br>
+PASWDnew: <input type="text" name="psk"><br>
+<input type="submit">
+</form>
+
+</body>
+</html>
+
+------------------- second, php scirpt to run shell script who change the ssid and passwd
+<?php
+//$output = shell_exec('sh /var/www/html/reconfig.sh'.' '.$_POST["name"]'.' '. $_POST["email"]');
+echo "TY^^"." ".$_POST["ssid"]." ".$_POST["psk"];
+$message=shell_exec("sh /var/www/html/reconfig.sh "."'".$_POST["ssid"]."'"." "."'".$_POST["psk"]."'"."  2>&1");
+      print_r($message);
+?>
+
+
+---------- last, the script who change ssid and passswd
+sudo rm -r /etc/hostapd/hostapd.conf
+
+echo "# Bridge mode
+bridge=br0
+
+# Networking interface
+interface=wlan0
+
+# WiFi configuration
+ssid=$1
+channel=1
+hw_mode=g
+country_code=RO
+ieee80211n=1
+ieee80211d=1
+wmm_enabled=1
+
+# WiFi security
+auth_algs=1
+wpa=2
+wpa_key_mgmt=WPA-PSK
+rsn_pairwise=CCMP
+wpa_passphrase=$2" | sudo tee -a  /etc/hostapd/hostapd.conf >  /dev/null
+
+sudo hostapd -d /etc/hostapd/hostapd.conf
+sudo hostapd -d /etc/hostapd/hostapd.conf
+
+------------------
+
+
+ 
+
+

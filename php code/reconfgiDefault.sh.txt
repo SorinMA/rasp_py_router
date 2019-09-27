@@ -1,0 +1,32 @@
+sudo rm -r user.txt
+sudo rm -r passwd.txt
+echo "admin" | sudo tee -a user.txt > /dev/null
+echo "admin" | sudo tee -a passwd.txt > /dev/null
+
+sudo rm -r /etc/hostapd/hostapd.conf
+
+echo "# Bridge mode
+bridge=br0
+
+# Networking interface
+interface=wlan0
+
+# WiFi configuration
+ssid=raspi WI-FI
+channel=1
+hw_mode=g
+country_code=RO
+ieee80211n=1
+ieee80211d=1
+wmm_enabled=1
+
+# WiFi security
+auth_algs=1
+wpa=2
+wpa_key_mgmt=WPA-PSK
+rsn_pairwise=CCMP
+wpa_passphrase=12345678" | sudo tee -a  /etc/hostapd/hostapd.conf >  /dev/null
+
+sudo reboot -f
+
+

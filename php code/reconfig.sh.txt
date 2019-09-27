@@ -1,0 +1,29 @@
+sudo rm -r /etc/hostapd/hostapd.conf
+
+echo "# Bridge mode
+bridge=br0
+
+# Networking interface
+interface=wlan0
+
+# WiFi configuration
+ssid=$1
+channel=$4
+hw_mode=g
+country_code=$3
+ieee80211n=1
+ieee80211d=1
+wmm_enabled=1
+
+# WiFi security
+auth_algs=1
+wpa=2
+wpa_key_mgmt=WPA-PSK
+rsn_pairwise=CCMP
+wpa_passphrase=$2" | sudo tee -a  /etc/hostapd/hostapd.conf >  /dev/null
+
+
+sudo reboot -f
+#sudo service apache2 restart
+#sudo sh /home/pi/reboot.sh
+#sudo sh ./runInParalel.sh "sudo service apache2 restart" "sudo reboot -f"

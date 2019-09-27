@@ -1,0 +1,31 @@
+ultimele modificari:
+
+in newShow.py:
+ #---
+        displayText('IP:'+localIp, 20, 1, (200,200,1), True)
+        displayText('Ping:    '+str(ping), 25, 2, (200,200,1), False)
+        displayText('Download:'+str(down), 25, 3, (200,200,1), False)
+        displayText('Upload:  '+str(up), 25, 4, (200,200,1), False)
+        displayText('Our Router', 20, 5, (200, 200, 1), False)
+        pygame.display.flip()
+        time.sleep(1)
+        #-----------
+        f = open("/var/www/html/ssid.txt", "r")
+        ssid = f.readline()
+        displayText('SSID:', 20, 1, (200,200,1), True)
+        displayText(ssid[0:len(ssid)-1], 20, 3, (200,200,1), False)
+        pygame.display.flip()
+        time.sleep(1)
+        #------------- thsi shit
+-------------am adaugat fct de citire ssid
+
+in reconfig.sh:
+sudo rm -r ssid.txt
+echo "$1" | sudo tee -a ssid.txt > /dev/null
+---la inceput
+in reconfigDefault.sh:
+sudo rm -r ssid.txt
+echo "raspi WI-FI" | sudo tee -a ssid.txt > /dev/null
+---------- la inceput
+
+si la mai adaugam un fisier: ssid.txt (care ca contine ssidul)

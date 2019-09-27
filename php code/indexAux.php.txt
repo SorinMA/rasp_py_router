@@ -1,0 +1,117 @@
+
+<html>
+<body>
+<?php
+session_start(); /* Starts the session */
+if(!isset($_SESSION['UserData']['Username'])){
+header("location:index.php");
+exit;
+}
+?>
+
+<?php echo "Nelu te pupa"; ?>
+<?php echo date('Y-m-d H:i:s');
+//$output = shell_exec('sh /var/www/html/reconfig.sh');
+?>
+<br>
+
+<form action="reconfig.php" method="post" name="ssidPsk">
+  <table width="400" border="0" align="center" cellpadding="5" cellspacing="1" class="Table">
+    <?php if(isset($msg)){?>
+    <tr>
+      <td colspan="2" align="center" valign="top"><?php echo $msg;?></td>
+    </tr>
+    <?php } ?>
+    <tr>
+      <td colspan="2" align="left" valign="top"><h3>WI-FI settings:</h3></td>
+    </tr>
+    <tr>
+      <td align="right" valign="top">ssid</td>
+      <td><input name="ssid" type="text" class="Input"></td>
+    </tr>
+    <tr>
+      <td align="right">psk</td>
+      <td><input name="psk" type="password" class="Input" minlength="8"></td>
+    </tr>
+     <tr>
+      <td align="right" valign="top">Countery</td>
+      <td>
+        <input type="radio" name="country" value="RO" checked>RO<br>
+        <input type="radio" name="country" value="US">US<br>
+   </td>
+    </tr>
+    <tr>
+      <td align="right">Channel</td>
+      <td>
+        <select name="channel">
+           <option value="1">1</option>
+           <option value="2">2</option>
+           <option value="3">3</option>
+           <option value="4">4</option>
+           <option value="5">5</option>
+           <option value="6">6</option>
+           <option value="7">7</option>
+           <option value="8">8</option>
+           <option value="9">9</option>
+           <option value="10">10</option>
+
+
+        </select>
+     </td>
+</tr>
+    <tr>
+      <td> </td>
+      <td><input name="Submit" type="submit" value="Login" class="Button3"></td>
+    </tr>
+
+
+  </table>
+</form>
+<hr width="30%">
+<form action="reconfigDefault.php" method="post" name="reset">
+  <table width="400" border="0" align="center" cellpadding="5" cellspacing="1" class="Table">
+  <tr>
+   <td>
+
+   </td>
+   <td>
+    <input type="submit" value="Factory Reset"
+         name="Submit" id="frm1_submit" />
+   </td>
+   </tr>
+  </table>
+</form>
+
+<hr width="30%">
+<form action="reset.php" method="post" name="resetR">
+  <table width="400" border="0" align="center" cellpadding="5" cellspacing="1" class="Table">
+  <tr>
+   <td>
+
+   </td>
+   <td>
+    <input type="submit" value="Reboot"
+         name="Submit" id="frm1_submit" />
+   </td>
+   </tr>
+  </table>
+</form>
+<hr width="30%">
+<form action="in.php" method="post" name="Login_Form">
+  <table width="400" border="0" align="center" cellpadding="5" cellspacing="1" class="Table">
+    <tr>
+      <td> </td>
+      <td><input name="Submit" type="submit" value="Back" class="Button3"></td>
+    </tr>
+  </table>
+</form>
+
+
+
+</body>
+</html>
+
+
+
+
+

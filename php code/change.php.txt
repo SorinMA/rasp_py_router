@@ -1,0 +1,16 @@
+
+<?php session_start(); /* Starts the session */
+if(!isset($_SESSION['UserData']['Username'])){
+header("location:index.php");
+exit;
+}
+
+
+$message=shell_exec("sh /var/www/html/config.sh "."'".$_POST["NewUsername"]."'"$
+      print_r($message);
+
+header("location:index.php");
+?>
+
+
+
